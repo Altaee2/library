@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة مكتب – مكاتب بابل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+    <style>
+        :root { --gold: #C9922A; --dark: #0D0D0D; --dark2: #161616; --text: #F0EDE6; }
+        body { font-family: 'Cairo', sans-serif; background: var(--dark); color: var(--text); padding: 20px; }
+        .box { max-width: 600px; margin: 0 auto; background: var(--dark2); padding: 30px; border-radius: 20px; border: 1px solid rgba(201,146,42,0.3); }
+        h1 { text-align: center; color: var(--gold); margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: 700; color: var(--gold); font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; outline: none; }
+        #map-select { height: 200px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--gold); }
+        .btn { width: 100%; background: var(--gold); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 900; margin-top: 25px; cursor: pointer; font-size: 1.1rem; }
+        .back { display: block; text-align: center; margin-top: 15px; color: #888; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>سجّل مكتبك مجاناًdd</h1>
+    
+    <label>اسم المكتب</label>
+    <input type="text" id="name" placeholder="مثال: مكتبة بابل المركزية">
+
+    <label>المنطقة</label>
+    <select id="area">
+        <option>الحلة - المركز</option>
+        <option>المحاويل</option>
+        <option>المسيب</option>
+        <option>الهاشمية</option>
+        <option>القاسم</option>
+        <option>النيل</option>
+        <option>ابي غرق</option>
+        <option>نادر</option>
+    </select>
+
+    <label>رقم الهاتف</label>
+    <input type="tel" id="phone" placeholder="078xxxxxxxx">
+
+    <label>رابط تواصل إضافي (اختياري)</label>
+    <input type="url" id="socialLink" placeholder="رابط صفحتك على فيسبوك أو تليجرام">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <div>
+        <label>وقت الافتتاح</label>
+        <input type="time" id="openTime" value="08:00">
+    </div>
+    <div>
+        <label>وقت الإغلاق</label>
+        <input type="time" id="closeTime" value="22:00">
+    </div>
+</div>
+
+<label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 15px;">
+    <input type="checkbox" id="hasDelivery" style="width: auto;">
+    <span>هل يتوفر خدمة توصيل؟ 🚚</span>
+</label>
+    <label>وصف الخدمات</label>
+    <textarea id="desc" rows="3" placeholder="تكلم عن خدماتك (طباعة، تجليد، توصيل...)"></textarea>
+
+    <label>حدد الموقع بالضغط على الخريطة</label>
+    <div id="map-select"></div>
+    <input type="hidden" id="lat">
+    <input type="hidden" id="lng">
+
+    <button class="btn" id="saveBtn">نشر المكتب الآن 🚀</button>
+    <a href="index.html" class="back">إلغاء والعودة</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCDmFyrd1Ln4puAvuGv64z4IO76w6iF_9M",
+        authDomain: "ali-hussain-cd654.firebaseapp.com",
+        projectId: "ali-hussain-cd654",
+        storageBucket: "ali-hussain-cd654.firebasestorage.app",
+        messagingSenderId: "283506662800",
+        appId: "1:283506662800:web:58b5c1872aab5792e62715"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const map = L.map('map-select').setView([32.48, 44.42], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    let marker;
+    map.on('click', (e) => {
+        if(marker) map.removeLayer(marker);
+        marker = L.marker(e.latlng).addTo(map);
+        document.getElementById('lat').value = e.latlng.lat;
+        document.getElementById('lng').value = e.latlng.lng;
+    });
+
+    document.getElementById('saveBtn').onclick = async () => {
+        const lat = document.getElementById('lat').value;
+        const name = document.getElementById('name').value;
+
+        if(!name || !lat) return alert("اكمل البيانات وحدد موقعك!");
+
+        try {
+            await addDoc(collection(db, "offices"), {
+                name: name,
+                area: document.getElementById('area').value,
+                phone: document.getElementById('phone').value,
+                socialLink: document.getElementById('socialLink').value,
+                desc: document.getElementById('desc').value,
+                closeTime: document.getElementById('closeTime').value,
+                openTime: document.getElementById('openTime').value,
+                hasDelivery: document.getElementById('hasDelivery').checked, // true أو false
+                lat: parseFloat(lat),
+                lng: parseFloat(document.getElementById('lng').value),
+                status: "open"
+            });
+            alert("تمت الإضافة بنجاح!");
+            window.location.href = "index.html";
+        } catch(e) { alert("خطأ في الاتصال!"); }
+    };
+</script>
+</body>
+</html>
