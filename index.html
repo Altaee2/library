@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> مكاتب بابل</title>
+    <meta name="description" content="الدليل الشامل لمكاتب الطباعة والخدمات الجامعية في محافظة بابل - ابحث عن أقرب مكتبة إليك.">
+<meta name="keywords" content="مكاتب بابل, طباعة, الحلة, خدمات جامعية, قرطاسية">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://your-domain.com/"> <meta property="og:title" content="طبع بابل | دليل المكاتب التفاعلي">
+<meta property="og:description" content="اكتشف المكاتب القريبة منك في بابل، تعرف على أوقات الدوام، خدمات التوصيل، وتواصل معهم مباشرة.">
+<meta property="og:image" content="https://i.postimg.cc/KvHMGtgQ/Library-free-icons-designed-by-Aranagraphics.jpg"> <meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://your-domain.com/">
+<meta property="twitter:title" content="طبع بابل | دليل المكاتب التفاعلي">
+<meta property="twitter:description" content="دليلك الأول للوصول إلى مكاتب الطباعة في بابل بكل سهولة عبر الخريطة التفاعلية.">
+<meta property="twitter:image" content="https://i.postimg.cc/KvHMGtgQ/Library-free-icons-designed-by-Aranagraphics.jpg">
+
+<title>طبع بابل - دليل مكاتب بابل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+    <style>
+        :root { --gold: #C9922A; --gold-light: #E8B84B; --dark: #0D0D0D; --dark2: #161616; --text: #F0EDE6; --text-muted: #9A9490; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: var(--dark); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
+        
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; right: 0; left: 0; z-index: 1000;
+            background: rgba(13,13,13,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(201,146,42,0.2);
+            padding: 0 2rem; height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-size: 1.4rem; font-weight: 900; color: var(--gold-light); line-height: 1.2; }
+        .logo span { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; display: block; }
+        nav ul { display: flex; gap: 2rem; list-style: none; }
+        nav ul a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+        nav ul a:hover { color: var(--gold-light); }
+        .btn-nav { background: var(--gold); color: var(--dark); border: none; padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 700; cursor: pointer; text-decoration: none; }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 80px 20px; text-align: center; position: relative;
+        }
+        .hero::before {
+            content: ''; position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(201,146,42,0.1) 0%, transparent 70%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .hero-badge { background: rgba(201,146,42,0.1); border: 1px solid rgba(201,146,42,0.3); color: var(--gold-light); padding: 0.4rem 1.2rem; border-radius: 50px; font-size: 0.8rem; margin-bottom: 1.5rem; }
+        .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; margin-bottom: 1rem; }
+        .hero h1 em { font-style: normal; color: var(--gold-light); }
+        .hero p { color: var(--text-muted); max-width: 600px; line-height: 1.8; margin-bottom: 2.5rem; }
+        .hero-stats { display: flex; gap: 3rem; margin-top: 3rem; }
+        .stat-num { font-size: 2.2rem; font-weight: 900; color: var(--gold-light); }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Map Section */
+        .map-section { padding: 5rem 2rem; max-width: 1300px; margin: 0 auto; }
+        .section-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+        .section-title { font-size: 2rem; font-weight: 900; }
+        .section-title span { color: var(--gold); }
+
+        .map-container { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        #map { height: 550px; border-radius: 20px; border: 1px solid rgba(201,146,42,0.2); z-index: 1; }
+        .sidebar { height: 550px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-left: 5px; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+        .card { background: var(--dark2); padding: 1.2rem; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: var(--gold); transform: translateX(-5px); }
+        .card h3 { font-size: 1.1rem; color: var(--gold-light); margin-bottom: 5px; }
+        .card p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--dark2); border: 1px solid var(--gold); border-radius: 24px; padding: 30px; max-width: 450px; width: 100%; position: relative; }
+        .close-modal { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+        .modal-links { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
+        .link-item { background: #222; color: var(--gold); padding: 12px; border-radius: 12px; text-decoration: none; text-align: center; font-weight: 700; border: 1px solid rgba(201,146,42,0.2); transition: 0.3s; }
+        .link-item:hover { background: var(--gold); color: var(--dark); }
+        /* HOW IT WORKS */
+  .how-section { background: var(--dark2); padding: 5rem 2rem; margin: 2rem 0; }
+  .how-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
+  .section-subtitle { font-size: 0.85rem; color: var(--gold-light); font-weight: 700; letter-spacing: 1px; margin-bottom: 0.8rem; display: block; }
+  .how-inner h2 { font-size: 2rem; font-weight: 900; margin-bottom: 3rem; }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+  .step { background: var(--dark3); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 1.8rem 1.5rem; text-align: center; transition: all 0.3s; }
+  .step:hover { border-color: rgba(201,146,42,0.3); transform: translateY(-4px); }
+  .step-num { width: 46px; height: 46px; background: rgba(201,146,42,0.15); border: 1px solid rgba(201,146,42,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 900; color: var(--gold-light); margin: 0 auto 1rem; }
+  .step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; font-family: 'Tajawal', sans-serif; }
+
+        @media (max-width: 900px) {
+            nav ul { display: none; }
+            .map-container { grid-template-columns: 1fr; }
+            .sidebar { height: 350px; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">طبّع بابل <span>مكاتب الطباعة والاستنساخ</span></div>
+    <ul>
+        <li><a href="#map-section">الخريطة</a></li>
+        <li><a href="register.html">سجّل مكتبك</a></li>
+    </ul>
+    <a href="register.html" class="btn-nav">سجّل مجاناً</a>
+</nav>
+
+<section class="hero">
+    <div class="hero-badge">🗺️ محافظة بابل – الحلة</div>
+    <h1>اطبع وانسخ<br><em>بأسهل طريقة</em></h1>
+    <p>تصفح مكاتب الطباعة في منطقتك، اعرف الخدمات المتوفرة، وتواصل معهم مباشرة عبر الهاتف أو المنصات الاجتماعية.</p>
+    <div style="display: flex; gap: 15px;">
+        <button class="btn-nav" style="padding: 0.8rem 2rem;" onclick="document.getElementById('map-section').scrollIntoView()">🗺️ ابدأ البحث</button>
+        <a href="register.html" style="background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 700;">أضف مكتبك</a>
+    </div>
+    <div class="hero-stats">
+        <div class="stat"><div class="stat-num" id="c1">0</div><div class="stat-label">مكتب مسجل</div></div>
+        <div class="stat"><div class="stat-num" id="c2">0</div><div class="stat-label">منطقة مغطاة</div></div>
+        <div class="stat"><div class="stat-num" id="c3">0</div><div class="stat-label">زبون مستفيد</div></div>
+    </div>
+</section>
+
+<section class="map-section" id="map-section">
+    <div class="section-header">
+        <div class="section-title">خريطة <span>المكاتب</span></div>
+        <span id="count-label" style="color: var(--text-muted);">جاري التحميل...</span>
+    </div>
+    <div class="search-filter-section" style="margin-bottom: 25px;">
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+        
+        <div style="flex: 1; min-width: 280px;">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث باسم المكتبة..." 
+                   style="width: 100%; padding: 14px 20px; border-radius: 12px; background: #1a1a1a; border: 1px solid rgba(201,146,42,0.3); color: white; font-family: 'Cairo'; outline: none;">
+        </div>
+
+        <div id="areaFilters" style="display: flex; gap: 10px; overflow-x: auto; padding: 5px 0;">
+            </div>
+    </div>
+</div>
+
+<style>
+    .filter-btn {
+        background: #1a1a1a; color: #9A9490; border: 1px solid rgba(255,255,255,0.1);
+        padding: 8px 18px; border-radius: 8px; cursor: pointer; white-space: nowrap;
+        font-family: 'Cairo'; font-weight: 600; transition: 0.3s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+        background: var(--gold); color: var(--dark); border-color: var(--gold);
+    }
+</style>
+    <div class="map-container">
+        <div id="map"></div>
+        <div class="sidebar" id="sidebar"></div>
+    </div>
+</section>
+<section class="how-section" id="how">
+  <div class="how-inner">
+    <span class="section-subtitle">⚡ سهل وسريع</span>
+    <h2>كيف يعمل طبّع بابل؟</h2>
+    <div class="steps-grid">
+      <div class="step"><div class="step-num">1</div><h3>شوف الخريطة</h3><p>شوف كل مكاتب الطباعة على الخريطة واعرف أقربها لموقعك</p></div>
+      <div class="step"><div class="step-num">2</div><h3>اختر المكتب</h3><p>اضغط على أي مكتب واعرف خدماته وأسعاره وتقييمه</p></div>
+      <div class="step"><div class="step-num">3</div><h3>تواصل مباشرة</h3><p>اتصل بالمكتب أو اطلب توصيل الطلب لباب بيتك</p></div>
+      <div class="step"><div class="step-num">4</div><h3>قيّم التجربة</h3><p>ساعد الناس يختارون الأفضل بتقييمك الصادق</p></div>
+    </div>
+  </div>
+</section>
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <button class="close-modal" onclick="closeModal()">✕</button>
+        <h2 id="m-name" style="color: var(--gold-light); margin-bottom: 10px;"></h2>
+        <p id="m-area" style="color: var(--gold); font-size: 0.9rem; margin-bottom: 15px;"></p>
+        <p id="m-desc" style="color: var(--text-muted); line-height: 1.7; font-size: 0.95rem;"></p>
+        <div class="modal-links" id="m-links"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<footer style="background: #080808; padding: 60px 20px 20px; border-top: 1px solid rgba(201,146,42,0.1); margin-top: 50px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
+        
+        <div>
+            <h3 style="color: var(--gold); margin-bottom: 20px; font-size: 1.4rem;">طبّع بابل 🖨️</h3>
+            <p style="color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
+                المنصة الأولى في محافظة بابل لربط المواطنين بمكاتب الطباعة والاستنساخ. نهدف لتسهيل الوصول للخدمات الطلابية والمكتبية بضغطة زر واحدة.
+            </p>
+        </div>
+
+        <div>
+            <h3 style="color: var(--gold); margin-bottom: 20px; font-size: 1.1rem;">تطوير وإدارة</h3>
+            <ul style="list-style: none; color: var(--text-muted); font-size: 0.95rem;">
+                <li style="margin-bottom: 10px;">👨‍💻 المبرمجين: <b>علي الطائي علوم الحاسوب مرحلة اولى</b> و <b>علي حسين علوم حاسوب مرحلة اولى</b></li>
+                <li style="margin-bottom: 10px;">📍 الموقع: العراق - بابل</li>
+            </ul>
+        </div>
+
+        <div>
+            <h3 style="color: var(--gold); margin-bottom: 20px; font-size: 1.1rem;">روابط تهمك</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="register.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">سجّل مكتبك الآن</a>
+                <a href="#map-section" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">خريطة المكاتب</a>
+                <a href="https://t.me/x9iiiiiii" target="_blank" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">الدعم الفني (تليجرام)</a>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; font-family: 'Tajawal';">
+            جميع الحقوق محفوظة © 2026 | تم التطوير بواسطة 
+            <span style="color: var(--gold); font-weight: 700;">حسين عمار / امن سيبراني اول</span>
+        </p>
+    </div>
+</footer>
+<script type="module">
+    // ... (إعدادات Firebase والخريطة تبقى كما هي)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCDmFyrd1Ln4puAvuGv64z4IO76w6iF_9M",
+        authDomain: "ali-hussain-cd654.firebaseapp.com",
+        projectId: "ali-hussain-cd654",
+        storageBucket: "ali-hussain-cd654.firebasestorage.app",
+        messagingSenderId: "283506662800",
+        appId: "1:283506662800:web:58b5c1872aab5792e62715"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const map = L.map('map', { attributionControl: false }).setView([32.48, 44.42], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    let markers = {};
+    let allOffices = [];
+    let activeArea = 'الكل';
+
+    // --- تحديث دالة getStatus لتكون أكثر أماناً ---
+    function getStatus(open, close) {
+    try {
+        if (!open || !close) return { label: 'غير محدد', color: '#999', timeLeft: '' };
+
+        const toMinutes = (timeStr) => {
+            const clean = timeStr.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[^0-9:]/g, '');
+            const [h, m] = clean.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        // تحويل الوقت من نظام 24 إلى نظام 12 (صباحاً/مساءً) للعرض فقط
+        const format12 = (timeStr) => {
+            let [h, m] = timeStr.split(':').map(Number);
+            let suffix = h >= 12 ? 'م' : 'ص';
+            h = h % 12 || 12;
+            return `${h}:${m < 10 ? '0' + m : m} ${suffix}`;
+        };
+
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Asia/Baghdad', hour: 'numeric', minute: 'numeric', hour12: false
+        });
+        const [nowH, nowM] = formatter.format(now).split(':').map(Number);
+        
+        const currentTotal = nowH * 60 + nowM;
+        const openTotal = toMinutes(open);
+        const closeTotal = toMinutes(close);
+
+        let isOpen = false;
+        let diff = 0;
+
+        if (closeTotal < openTotal) { // دوام يعبر منتصف الليل
+            isOpen = (currentTotal >= openTotal || currentTotal <= closeTotal);
+            if (isOpen) {
+                diff = (currentTotal >= openTotal) ? (1440 - currentTotal + closeTotal) : (closeTotal - currentTotal);
+            }
+        } else { // دوام اعتيادي
+            isOpen = (currentTotal >= openTotal && currentTotal <= closeTotal);
+            if (isOpen) diff = closeTotal - currentTotal;
+        }
+
+        // حساب الساعات والدقائق المتبقية
+        const remainH = Math.floor(diff / 60);
+        const remainM = diff % 60;
+        let timeLeftStr = isOpen ? `(يغلق بعد ${remainH} س و ${remainM} د)` : '';
+
+        return {
+            label: isOpen ? '● مفتوح الآن' : '○ مغلق حالياً',
+            color: isOpen ? '#4CAF50' : '#f44336',
+            displayOpen: format12(open),
+            displayClose: format12(close),
+            timeLeft: timeLeftStr
+        };
+
+    } catch (e) {
+        console.error("Time Error:", e);
+        return { label: 'خطأ بالتنسيق', color: '#f44336', timeLeft: '' };
+    }
+}
+
+    // --- تحديث دالة runSearch لمنع الانهيار ---
+    function runSearch() {
+        try {
+            const query = (document.getElementById('searchInput').value || "").toLowerCase();
+            const sidebar = document.getElementById('sidebar');
+            if(!sidebar) return;
+            sidebar.innerHTML = '';
+            
+            Object.values(markers).forEach(m => map.removeLayer(m));
+            markers = {};
+
+            const results = allOffices.filter(o => {
+                const nameMatch = (o.name || "").toLowerCase().includes(query);
+                const areaMatch = (activeArea === 'الكل' || o.area === activeArea);
+                return nameMatch && areaMatch;
+            });
+
+            results.forEach(o => {
+                try {
+                    // حماية ضد فقدان الإحداثيات
+                    if(!o.lat || !o.lng) return;
+
+                    const status = getStatus(o.openTime, o.closeTime);
+                    const deliveryIcon = o.hasDelivery ? ' 🚚' : '';
+
+                    const marker = L.marker([o.lat, o.lng]).addTo(map);
+                    marker.bindPopup(`
+                        <div style="text-align:center; font-family: 'Cairo';">
+                            <b>${o.name || 'مكتب غير معروف'}</b><br>
+                            <span style="color:${status.color}; font-weight:bold;">${status.label}</span><br>
+                            <button onclick="window.openModal('${o.id}')" style="margin-top:10px; cursor:pointer; background:#C9922A; border:none; padding:6px 12px; border-radius:6px; font-weight:700; width:100%;">التفاصيل</button>
+                        </div>
+                    `);
+                    markers[o.id] = marker;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = () => window.focusOffice(o.id);
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <h3 style="margin:0; font-size:1rem;">${o.name || 'بدون اسم'} ${deliveryIcon}</h3>
+                                <p style="margin:5px 0 0;">📍 ${o.area || 'غير محدد'}</p>
+                            </div>
+                            <span style="color:${status.color}; font-size:0.7rem; font-weight:bold; background:rgba(255,255,255,0.05); padding:3px 8px; border-radius:6px;">
+                                ${status.label}
+                            </span>
+                        </div>
+                    `;
+                    sidebar.appendChild(card);
+                } catch (err) {
+                    console.error("Error drawing card for:", o.id, err);
+                }
+            });
+
+            document.getElementById('count-label').textContent = `${results.length} مكاتب متوفرة`;
+        } catch (globalErr) {
+            console.error("Global search error:", globalErr);
+        }
+    }
+
+    // --- جلب البيانات ---
+    onSnapshot(collection(db, 'offices'), (snapshot) => {
+        allOffices = [];
+        const areasFound = new Set();
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const o = { id: doc.id, ...data };
+            allOffices.push(o);
+            if(o.area) areasFound.add(o.area);
+        });
+        renderAreaButtons(Array.from(areasFound));
+        updateStats(allOffices);
+        runSearch(); 
+    });
+    
+    // بقية الدوال (renderAreaButtons, filterByArea, focusOffice, openModal, closeModal, updateStats) 
+    // تبقى كما هي مع التأكد من استخدام window. لربطها بالـ HTML.
+
+    window.filterByArea = (area) => { activeArea = area; runSearch(); };
+    window.closeModal = () => document.getElementById('modal').classList.remove('active');
+    
+    window.openModal = (id) => {
+        const o = allOffices.find(x => x.id === id);
+        if(!o) return;
+        const status = getStatus(o.openTime, o.closeTime);
+        document.getElementById('m-name').textContent = o.name;
+        document.getElementById('m-area').textContent = "📍 " + (o.area || 'غير محدد');
+        const deliveryStatus = o.hasDelivery ? "✅ متوفر توصيل" : "❌ لا يتوفر توصيل";
+        document.getElementById('m-desc').innerHTML = `
+            <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; margin-bottom:15px; border-right:4px solid ${status.color};">
+                <div style="color:${status.color}; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">${status.label}</div>
+                <div style="color:${status.color}; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">
+                <span style="font-size:0.8rem; color:#aaa; font-weight:normal;">${status.timeLeft}</span>
+            </div>
+                <div style="font-size:0.9rem; color:#ccc;">
+                 يفتح: <span style="color:var(--gold)">${status.displayOpen}</span> | 
+                  يغلق: <span style="color:var(--gold)">${status.displayClose}</span></div>
+                <div style="font-size:0.9rem; margin-top:5px; color:var(--gold);">${deliveryStatus}</div>
+            </div>
+            <p style="line-height:1.6;">${o.desc || "لا يوجد وصف إضافي"}</p>
+        `;
+        const linksCont = document.getElementById('m-links');
+        linksCont.innerHTML = `<a href="tel:${o.phone}" class="link-item">📞 اتصال هاتفي مباشر</a>`;
+        if(o.socialLink) linksCont.innerHTML += `<a href="${o.socialLink}" target="_blank" class="link-item">🌐 صفحة التواصل الاجتماعي</a>`;
+        document.getElementById('modal').classList.add('active');
+    };
+
+    window.focusOffice = (id) => {
+        const o = allOffices.find(x => x.id === id);
+        if(o && markers[id]) {
+            map.flyTo([o.lat, o.lng], 15);
+            setTimeout(() => markers[id].openPopup(), 500);
+            if(window.innerWidth < 900) document.getElementById('map').scrollIntoView();
+        }
+    };
+
+    function renderAreaButtons(areas) {
+        const container = document.getElementById('areaFilters');
+        let html = `<button class="filter-btn ${activeArea === 'الكل' ? 'active' : ''}" onclick="window.filterByArea('الكل')">الكل</button>`;
+        areas.forEach(area => {
+            html += `<button class="filter-btn ${activeArea === area ? 'active' : ''}" onclick="window.filterByArea('${area}')">${area}</button>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function updateStats(list) {
+        const c1 = document.getElementById('c1'); if(c1) animCounter('c1', list.length);
+        const areas = [...new Set(list.map(o => o.area))];
+        const c2 = document.getElementById('c2'); if(c2) animCounter('c2', areas.length);
+        const c3 = document.getElementById('c3'); if(c3) animCounter('c3', list.length * 12 + 50, '+');
+    }
+
+    function animCounter(id, target, suf='') {
+        let n = 0; const el = document.getElementById(id); if(!el) return;
+        const step = Math.ceil(target/50) || 1;
+        const t = setInterval(() => { 
+            n = Math.min(n+step, target); el.textContent = n+suf; 
+            if(n>=target) clearInterval(t); 
+        }, 40);
+    }
+
+    document.getElementById('searchInput').addEventListener('input', runSearch);
+</script>
+</body>
+</html>
